@@ -142,11 +142,16 @@ crop_cache_paths = {s: build_crop_cache(s) for s in SPLITS}
 
 Пример поэтапного результата работы алгоритма поиска линии горизонта:
 
-![image_a](https://github.com/user-attachments/assets/2f30c659-5e55-446f-96d9-3c2489768655)
-![image_b](https://github.com/user-attachments/assets/b83929b4-b848-48bc-9ffa-15d31fd817e2)
-![image_c](https://github.com/user-attachments/assets/844a4f5b-ea2c-4706-b29a-9b0075eb76d9)
-![image_d](https://github.com/user-attachments/assets/f2c4ff2b-32dd-4a4c-844d-e912c03587d0)
-![image_e](https://github.com/user-attachments/assets/603b1101-5474-48ab-b446-c3111ad51261)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2f30c659-5e55-446f-96d9-3c2489768655" width="180"/>
+  <img src="https://github.com/user-attachments/assets/b83929b4-b848-48bc-9ffa-15d31fd817e2" width="180"/>
+  <img src="https://github.com/user-attachments/assets/844a4f5b-ea2c-4706-b29a-9b0075eb76d9" width="180"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f2c4ff2b-32dd-4a4c-844d-e912c03587d0" width="180"/>
+  <img src="https://github.com/user-attachments/assets/603b1101-5474-48ab-b446-c3111ad51261" width="180"/>
+</p>
 
 
 
