@@ -11,18 +11,59 @@ https://universe.roboflow.com/khoi-v0jxf/fire-smoke-segmentation-3ym8x
 
 ## Введение
 
+Методы компьютерного зрения активно применяются в задачах мониторинга окружающей среды, промышленной безопасности и интеллектуального видеонаблюдения. Одной из практически значимых задач в данной области является обнаружение пожароопасных ситуаций по изображениям, получаемым с камер наблюдения, беспилотных летательных аппаратов и других устройств регистрации. Своевременное выявление дыма и огня позволяет сократить время реагирования на возгорание и уменьшить возможный ущерб.
+
+В последние годы для решения задач обнаружения пожаров широко применяются глубокие сверточные нейронные сети, в том числе модели сегментации и детектирования объектов. Такие методы обеспечивают высокое качество распознавания, однако нередко требуют значительных вычислительных ресурсов, большого объема обучающих данных и специализированного аппаратного обеспечения. В связи с этим сохраняет актуальность разработка более легких и вычислительно эффективных подходов, пригодных для практического использования в условиях ограниченной производительности.
+
+В данном проекте исследуется подход, основанный на построении комитета классификаторов из нескольких быстрых искусственных нейронных сетей. Особенностью реализованного подхода является то, что анализ изображения выполняется не целиком, а методом скользящего окна. Для каждого положения окна вычисляется вектор признаков, описывающий текстурные и статистические свойства локального фрагмента изображения. Далее центральный пиксель окна относится к одному из классов: «огонь», «дым» или «норма». Такой способ обработки позволяет использовать неглубокие нейронные сети и при этом учитывать локальную структуру изображения. Для уменьшения числа ложноположительных срабатываний на этапе предобработки выполняется отсечение области неба по линии горизонта.
+
+Целью проекта является исследование возможностей применения комитета классификаторов из быстрых искусственных нейронных сетей с функцией активации s-parabola к задаче распознавания пожароопасных ситуаций на изображениях.
+
 ## Необходимое ПО
 
 ### Основные зависимости
 
+Для запуска потребуется установить библиотеки:
 ```bash
+pip install numpy opencv-python matplotlib pillow pandas tqdm h5py pycocotools
 pip install torch torchvision
 pip install segmentation-models-pytorch
-pip install opencv-python
-pip install numpy
-pip install pycocotools
-pip install tqdm
-pip install pillow
+```
+
+Используемые модули Python:
+
+```bash
+from __future__ import annotations
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+from PIL import Image
+import json
+from collections import defaultdict
+from pycocotools import mask as maskUtils
+import zipfile
+import io
+import segmentation_models_pytorch as smp
+import shutil
+from tqdm.auto import tqdm
+import os
+import pandas as pd
+from torch.utils.data import Dataset, DataLoader, random_split, Subset, WeightedRandomSampler
+import torchvision.transforms as T
+import torch.nn.functional as F
+import torch
+import torchvision.models as models
+import torch.nn as nn
+from dataclasses import dataclass
+import concurrent.futures
+from itertools import product
+import math
+import time
+from typing import Callable, Dict, List, Optional, Tuple, Union
+import h5py
+import glob
+from random import random
+import random
 ```
 
 ### Рекомендуемая среда
@@ -52,10 +93,33 @@ pip install pillow
 
 ## Предобработка данных
 
-### 1. Подготовка данных
+### Подготовка данных
+После подготовки проекта используются следующие каталоги:
+```bash
+code/
+crop_cache/
+best ins weights/
+best UNet weights/
+standartization params/
+test output/
+```
+Исходный код расположен в папке code/, где находятся основные файлы:
+
+* `Model.py` -- предобработка данных, обучение ИНС и сбор комитетов
+* `System.py` -- общая система с возможностью подачи на вход изображения и получения на выходи маски сегментации по результатам работы комитета
+* `Unet Comparison.py` -- обучение U-Net с весами ResNet.
+
+Файлы с заранее вычисленными значениями отсечения неба по линии горизонта расположены в папке: `crop_cache/`:
 
 ```bash
-# распаковать датасет
+crop_y_train_orig_K11_t0.06.json
+crop_y_valid_orig_K11_t0.06.json
+crop_y_test_orig_K11_t0.06.json
+```
+
+Необходимо распаковать набор данных:
+
+```bash
 fire-smoke-segmentation/
     train/
     valid/
@@ -63,7 +127,23 @@ fire-smoke-segmentation/
     _cache/
 ```
 
-Файлы `crop_y_*.json` содержат значения для обрезки неба по линии горизонта для каждого изображения.
+### Отсечение неба по линии горизонта
+
+Реализована функция `compute_crop_y_original` в файле `code/Model.py`, вычисляющая значение y, по которому будет происходить обрезка изображения. Функция `build_crop_cache` для ускорения повторных запусков сохраняет результаты вычисления границы отсечения в JSON-файлы в папке `crop_cache/`
+
+Пример:
+
+```python
+ROOT = "/content/fire-smoke-segmentation.v4i.coco-segmentation"
+SPLITS = ["train", "valid", "test"]
+
+crop_cache_paths = {s: build_crop_cache(s) for s in SPLITS}
+```
+
+###
+Изображение при необходимости приводится к фиксированному размеру 224×224 пикселя с помощью функции. Если размер изображения после обрезки меньше целевого, применяется дополнение до требуемого формата. Такое приведение необходимо для унификации дальнейшей обработки и сопоставимости результатов комитетов классификаторов и U-Net.
+
+###
 
 ## Подбор гиперпараметров классификаторов
 
