@@ -530,6 +530,8 @@ model = smp.Unet(
 
 ###  Сравнение работы комитетов с U-Net
 
+Возьмем два комитета, показавших наилучший результат по нахождению пожара, сравним их с U-Net. Результаты показывают, что качество решения поставленной задачи с помощью комитетов сопоставимо по основным показателям с СНС.
+
 | № | Классификатор | Глобальная точность | Глобальная полнота | Средняя точность | Средняя полнота | Процент найденных пожаров, % |
 |---|--------------|--------------------|--------------------|------------------|------------------|-------------------------------|
 | 1 | U-Net | 0.945 | 0.936 | 0.882 | 0.878 | 0.984 |
@@ -537,6 +539,8 @@ model = smp.Unet(
 | 3 | ИНС 1, ИНС 2, ИНС 3B, ИНС 4, ИНС 5 | 0.921 | 0.647 | 0.863 | 0.598 | 0.984 |
 
 ### Скорость работы комитетов
+
+Скорость работы комитета имеет обратную зависимость от количества классификаторов в нем, однако разница в скорости работы при количестве классификаторов от 2 до 5, в целом, незаметна и мала.
 
 | № | Состав комитета классификаторов | Скорость (пиксели/с) |
 |---|--------------------------------|----------------------|
@@ -549,8 +553,6 @@ model = smp.Unet(
 | 7 | ИНС 1, ИНС 2, ИНС 3B, ИНС 4 | 53237.08 |
 | 8 | ИНС 1, ИНС 2, ИНС 4, ИНС 5 | 53366.81 |
 | 9 | ИНС 1, ИНС 2, ИНС 3B, ИНС 4, ИНС 5 | 52999.04 |
-
-Вывод: 
 
 ### Реализованный функционал
 
@@ -585,14 +587,49 @@ model = smp.Unet(
 
 ---
 
-## 📷 Визуализация результатов
+## Визуализация результатов
 
 Примеры:
+<table align="center">
+  <tr>
+    <th>№</th>
+    <th>Исходное</th>
+    <th>Эталонная маска</th>
+    <th>K15</th>
+    <th>K18</th>
+    <th>U-Net</th>
+  </tr>
 
-* исходное изображение;
-* ground truth;
-* предсказание комитета;
-* предсказание U-Net.
+  <!-- Строка 1 -->
+  <tr>
+    <td>1</td>
+    <td><img src="https://github.com/user-attachments/assets/c12a518b-ef23-4bb4-a9b9-e4d41625865c" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/4c3fbf72-5608-4825-86fb-5cc675608133" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/038cd147-66cf-4954-9776-6166f60fc6b7" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/0f13077b-af64-4416-ac53-ab032201ad03" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/52212041-0f63-4d30-b0c9-2854e2e11fd1" width="120"/></td>
+  </tr>
+
+  <!-- Строка 2 -->
+  <tr>
+    <td>2</td>
+    <td><img src="https://github.com/user-attachments/assets/0271e6c2-a323-43c8-b1be-c8bfafb36b01" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/8f6c0be0-1595-48d7-aefd-9d3e4baa7129" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/06aba9fa-e094-44a1-9ebd-8ae320d1b0e1" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/f79729e4-d7a7-49df-a27f-7938ce0f76c6" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/67742233-6dc3-4284-996e-5a11489e27e1" width="120"/></td>
+  </tr>
+
+  <!-- Строка 3 -->
+  <tr>
+    <td>3</td>
+    <td><img src="https://github.com/user-attachments/assets/4d12c965-ad9b-4f54-b91b-ed19da94c6fd" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/77d2f59a-49a2-43a6-8535-e629e12188d3" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/7f773f33-86d5-4aa8-9769-6f4a14e377ba" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/d65cea60-3eeb-4eda-8579-ad1d86c21f70" width="120"/></td>
+    <td><img src="https://github.com/user-attachments/assets/d9c34c86-46d7-4a29-b06b-493951835999" width="120"/></td>
+  </tr>
+</table>
 
 ---
 
