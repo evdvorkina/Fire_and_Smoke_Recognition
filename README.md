@@ -660,14 +660,18 @@ mask, info = run_committee_on_image(img, committee_id="K18")
 
 ## Структура проекта
 
-```
+```text
 .
-├── Model.py
-├── System.py
-├── Unet_Comparison.py
-├── data/
-├── notebooks/
-├── README.md
+├── best UNet weights/          # сохраненные веса модели U-Net
+├── best ins weights/           # сохраненные веса искусственных нейронных сетей
+├── code/                       # исходный код проекта
+│   ├── Model.py                # извлечение признаков, предобработка, построение признаковых описаний
+│   ├── System.py               # логика комитетов классификаторов и запуск инференса
+│   └── Unet Comparison.py      # обучение, тестирование и сравнение с U-Net
+├── crop_cache/                 # кэш значений crop_y для отсечения неба по линии горизонта
+├── standartization params/     # параметры стандартизации признаков
+├── test output/                # примеры результатов работы моделей и комитетов
+└── README.md
 ```
 
 ---
